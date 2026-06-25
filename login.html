@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Login</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+        background-size: 400% 400%;
+        animation: bgMotion 12s ease infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      @keyframes bgMotion {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      form {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 12px;
+        width: 70%; /* Page ka 70% width */
+        max-width: 500px; /* Max width limit */
+        text-align: center;
+      }
+
+      h2 {
+        color: #0f0f0f;
+        margin-bottom: 20px;
+      }
+
+      input {
+        width: 100%;
+        padding: 14px;
+        margin: 10px 0;
+        border-radius: 8px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+      }
+
+      button {
+        width: 75%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        background-color: #2e2d2d;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #0c0c0c;
+      }
+
+      .links {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        margin-left: 90px;
+        margin-right: 90px;
+
+        font-size: 14px;
+      }
+
+      .links a {
+        color: #0f0e0f;
+        text-decoration: none;
+      }
+
+      .links a:hover {
+        text-decoration: underline;
+      }
+      .flash-box {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        z-index: 2000;
+        text-align: center;
+        min-width: 280px;
+      }
+
+      .flash-item {
+        margin-bottom: 10px;
+        color: #ef4444;
+        font-size: 14px;
+      }
+
+      .flash-box button {
+        padding: 8px 16px;
+        background: #2e2d2d;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div id="flashBox" class="flash-box">
+      {% for category, message in messages %}
+      <div class="flash-item">{{ message }}</div>
+      {% endfor %}
+      <button onclick="closeFlash()">OK</button>
+    </div>
+    {% endif %} {% endwith %}
+    <form action="/login" method="POST">
+      <h2>Login</h2>
+      <input type="email" name="email" placeholder="Email" required />
+      <div style="position: relative">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Password"
+          required
+        />
+        <span
+          onclick="togglePassword()"
+          style="
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+          "
+        >
+          👁
+        </span>
+      </div>
+      <button type="submit">Login</button>
+
+      <div class="links">
+        <a href="/signup">Create New Account</a>
+        <a href="/forgot-password">Forgot Password?</a>
+      </div>
+    </form>
+    <script>
+      function closeFlash() {
+        document.getElementById("flashBox").style.display = "none";
+      }
+
+      function togglePassword() {
+        let pass = document.getElementById("password");
+        pass.type = pass.type === "password" ? "text" : "password";
+      }
+    </script>
+  </body>
+</html>

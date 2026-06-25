@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Verify OTP</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+        background-size: 400% 400%;
+        animation: bgMotion 12s ease infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      @keyframes bgMotion {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      form {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 12px;
+        width: 70%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      h2 {
+        color: #0f0f0f;
+        margin-bottom: 20px;
+      }
+
+      .otp-inputs {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+      }
+
+      .otp-inputs input {
+        width: 40px;
+        height: 50px;
+        font-size: 24px;
+        text-align: center;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        background-color: #2e2d2d;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #0c0c0c;
+      }
+
+      .links {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        font-size: 14px;
+      }
+
+      .links a {
+        color: #0f0e0f;
+        text-decoration: none;
+      }
+
+      .links a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <form action="/verify-otp" method="POST" id="otpForm">
+      <h2>Verify OTP</h2>
+
+      <div class="otp-inputs">
+        <input type="text" name="otp1" maxlength="1" required />
+        <input type="text" name="otp2" maxlength="1" required />
+        <input type="text" name="otp3" maxlength="1" required />
+        <input type="text" name="otp4" maxlength="1" required />
+        <input type="text" name="otp5" maxlength="1" required />
+        <input type="text" name="otp6" maxlength="1" required />
+      </div>
+
+      <input type="hidden" name="otp" id="otpHidden" />
+
+      <button type="submit">Verify OTP</button>
+
+      <div class="links">
+        <a href="/login">Back to Login</a>
+        <a href="/resend-otp">Resend OTP</a>
+      </div>
+    </form>
+
+    <script>
+      const otpForm = document.getElementById("otpForm");
+      const inputs = document.querySelectorAll(".otp-inputs input");
+      const otpHidden = document.getElementById("otpHidden");
+
+      inputs.forEach((input, idx) => {
+        input.addEventListener("input", () => {
+          if (input.value.length > 0 && idx < inputs.length - 1) {
+            inputs[idx + 1].focus();
+          }
+        });
+
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Backspace" && input.value === "" && idx > 0) {
+            inputs[idx - 1].focus();
+          }
+        });
+      });
+
+      otpForm.addEventListener("submit", () => {
+        let otpValue = "";
+        inputs.forEach((input) => {
+          otpValue += input.value;
+        });
+        otpHidden.value = otpValue;
+      });
+    </script>
+  </body>
+</html>

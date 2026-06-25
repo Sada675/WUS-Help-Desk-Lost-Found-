@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/style.css') }}"
+    />
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div style="position: relative; text-align: center; margin-bottom: 15px">
+        <button
+          onclick="history.back()"
+          style="
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #070707;
+          "
+        >
+          ←
+        </button>
+
+        <h2 style="margin: 30px">
+          Edit {{ item_type|capitalize }} Item
+        </h2>
+      </div>
+
+      <form method="POST" enctype="multipart/form-data">
+        <input
+          name="title"
+          placeholder="Item name"
+          value="{{ item.title }}"
+          required
+        />
+
+        <select name="category" required>
+          <option value="">Select Category</option>
+          <option value="Electronics" {{ 'selected' if item.category == 'Electronics' else '' }}>Electronics</option>
+          <option value="Documents" {{ 'selected' if item.category == 'Documents' else '' }}>Documents</option>
+          <option value="Money" {{ 'selected' if item.category == 'Money' else '' }}>Money</option>
+          <option value="Jewelry" {{ 'selected' if item.category == 'Jewelry' else '' }}>Jewelry</option>
+          <option value="Other" {{ 'selected' if item.category == 'Other' else '' }}>Other</option>
+        </select>
+
+        <input
+          name="location"
+          placeholder="Location"
+          value="{{ item.location }}"
+          required
+        />
+
+        {% if item_type == 'lost' %}
+          <input type="date" name="date" value="{{ item.lost_date }}" required />
+        {% else %}
+          <input type="date" name="date" value="{{ item.found_date }}" required />
+        {% endif %}
+
+        <textarea name="description" required>{{ item.description }}</textarea>
+
+        <!-- 🔥 CURRENT IMAGE -->
+        {% if item.image %}
+          <p style="margin-bottom:5px; font-weight:bold">Current Image:</p>
+          <img
+            src="{{ url_for('static', filename='uploads/' ~ item.image) }}"
+            style="width:100%; max-height:180px; object-fit:cover; border-radius:10px; margin-bottom:10px"
+          />
+        {% endif %}
+
+        <!-- 🔥 CHANGE IMAGE -->
+        <input type="file" name="image" />
+
+        <button type="submit">Update</button>
+      </form>
+    </div>
+  </body>
+</html>

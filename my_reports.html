@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My Reports</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/navbar.css') }}"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* BODY */
+      body {
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+        padding: 20px;
+      }
+
+      /* HEADINGS */
+      h1 {
+        text-align: center;
+        margin-top: 100px;
+      }
+
+      h2 {
+        margin: 30px 0 15px;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 6px;
+      }
+
+      /* GRID */
+      .cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+      }
+
+      /* CARD */
+      .card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 6px; /* 🔥 spacing fix */
+        min-height: 260px;
+        transition: 0.25s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+      }
+
+      /* IMAGE WRAPPER (fix spacing issue) */
+      .image-wrapper {
+        width: 100%;
+        height: 150px;
+        overflow: hidden;
+        border-radius: 10px;
+      }
+
+      .image-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      /* TEXT */
+      .card h3 {
+        font-size: 18px;
+      }
+
+      .card p {
+        font-size: 14px;
+        color: #444;
+      }
+
+      /* ACTIONS */
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: auto;
+      }
+
+      .actions-left {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .actions-right {
+        display: flex;
+      }
+
+      /* BUTTONS */
+      .btn,
+      .delete-btn,
+      .status-btn,
+      .actions-right button.status {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: 0.25s;
+      }
+
+      .btn.edit {
+        background: #2563eb;
+      }
+      .delete-btn {
+        background: #dc2626;
+      }
+      .status-btn,
+      .actions-right button.status {
+        background: #16a34a;
+      }
+
+      .status-btn.green {
+        background: #0b8954;
+      }
+
+      /* HOVER */
+      .btn:hover,
+      .delete-btn:hover,
+      .status-btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.9;
+      }
+
+      /* MODAL */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .modal-box {
+        background: #fff;
+        padding: 25px;
+        border-radius: 12px;
+        width: 320px;
+        text-align: center;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: right; /* center buttons */
+        gap: 30px;
+        margin-top: 20px;
+      }
+
+      .cancel-btn,
+      .confirm-delete-btn {
+        padding: 10px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .cancel-btn {
+        background: #e5e7eb;
+      }
+      .confirm-delete-btn {
+        background: #dc2626;
+        color: white;
+      }
+
+      /* NAVBAR FIX */
+
+      /* RECOVERY BOX */
+      .recovery-box {
+        margin-top: 10px;
+        display: none;
+        flex-direction: column;
+        gap: 8px;
+        animation: fadeSlide 0.3s ease;
+      }
+
+      .recovery-box input {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 13px;
+      }
+
+      .recovery-box button {
+        padding: 8px;
+        border: none;
+        border-radius: 6px;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+      }
+
+      @keyframes fadeSlide {
+        from {
+          opacity: 0;
+          transform: translateY(-5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* MOBILE */
+      @media (max-width: 500px) {
+        .cards-container {
+          grid-template-columns: 1fr;
+        }
+
+        .actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .actions-left,
+        .actions-right {
+          width: 100%;
+          justify-content: space-between;
+        }
+
+        .btn,
+        .delete-btn,
+        .status-btn {
+          flex: 1;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include "partials/navbar.html" %}
+
+    <h1>My Reports</h1>
+
+    <!-- LOST ITEMS -->
+    <h2>Lost Items</h2>
+    <div class="cards-container">
+      {% for item in lost_items %}
+      <div class="card" data-id="{{ item.id }}" data-type="lost">
+        {% if item.image %}
+        <div class="image-wrapper">
+          <img
+            src="{{ url_for('static', filename='uploads/' ~ item.image) }}"
+          />
+        </div>
+        {% endif %}
+
+        <h3>{{ item.title }}</h3>
+        <p><b>Category:</b> {{ item.category }}</p>
+        <p><b>Location:</b> {{ item.location }}</p>
+        <p><b>Date:</b> {{ item.lost_date }}</p>
+        <p><b>Description:</b> {{ item.description[:120] }}...</p>
+
+        <div class="actions">
+          <div class="actions-left">
+            <a
+              href="{{ url_for('edit_report', item_type='lost', item_id=item.id) }}"
+              class="btn edit"
+            >
+              <i class="fa fa-pen"></i> Edit
+            </a>
+            <button
+              class="delete-btn"
+              onclick="openDeleteModal('{{ url_for('delete_report', item_type='lost', item_id=item.id) }}')"
+            >
+              Delete
+            </button>
+          </div>
+
+          <button class="status-btn" onclick="toggleRecovery(this)">
+            {% if item.status == 'recovered' %} Undo {% else %} Mark Recovered
+            {% endif %}
+          </button>
+
+          <!-- NEW INPUT BOX -->
+          <div class="recovery-box">
+            <input type="text" placeholder="Where was it recovered?" />
+            <button onclick="saveRecovery(this)">Save</button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- FOUND ITEMS -->
+    <h2>Found Items</h2>
+    <div class="cards-container">
+      {% for item in found_items %}
+      <div class="card" data-id="{{ item.id }}" data-type="found">
+        {% if item.image %}
+        <div class="image-wrapper">
+          <img
+            src="{{ url_for('static', filename='uploads/' ~ item.image) }}"
+          />
+        </div>
+        {% endif %}
+
+        <h3>{{ item.title }}</h3>
+        <p><b>Category:</b> {{ item.category }}</p>
+        <p><b>Location:</b> {{ item.location }}</p>
+        <p><b>Date:</b> {{ item.found_date }}</p>
+        <p><b>Description:</b> {{ item.description[:120] }}...</p>
+
+        <div class="actions">
+          <div class="actions-left">
+            <a
+              href="{{ url_for('edit_report', item_type='found', item_id=item.id) }}"
+              class="btn edit"
+            >
+              <i class="fa fa-pen"></i> Edit
+            </a>
+            <button
+              class="delete-btn"
+              onclick="openDeleteModal('{{ url_for('delete_report', item_type='found', item_id=item.id) }}')"
+            >
+              Delete
+            </button>
+          </div>
+
+          <button class="status-btn" onclick="toggleRecovery(this)">
+            {% if item.status == 'returned' %} Undo {% else %} Mark Returned {%
+            endif %}
+          </button>
+
+          <div class="recovery-box">
+            <input type="text" placeholder="Where was it returned?" />
+            <button onclick="saveRecovery(this)">Save</button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- MODAL -->
+    <div id="deleteModal" class="modal-overlay">
+      <div class="modal-box">
+        <h3>Confirm Deletion</h3>
+        <p>Are you sure?</p>
+        <div class="modal-actions">
+          <button class="cancel-btn" onclick="closeDeleteModal()">
+            Cancel
+          </button>
+          <form id="deleteForm" method="POST">
+            <button type="submit" class="confirm-delete-btn">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function openDeleteModal(url) {
+        document.getElementById("deleteForm").action = url;
+        document.getElementById("deleteModal").style.display = "flex";
+      }
+
+      function closeDeleteModal() {
+        document.getElementById("deleteModal").style.display = "none";
+      }
+
+      // ======================
+      // 🔁 TOGGLE RECOVERY / UNDO
+      // ======================
+      async function toggleRecovery(btn) {
+        const card = btn.closest(".card");
+        const box = card.querySelector(".recovery-box");
+
+        const itemId = card.dataset.id;
+        const type = card.dataset.type;
+
+        const isUndo = btn.innerText.trim() === "Undo";
+
+        // ======================
+        // 🔁 UNDO ACTION
+        // ======================
+        if (isUndo) {
+          const url =
+            type === "lost" ? `/undo-lost/${itemId}` : `/undo-found/${itemId}`;
+
+          try {
+            const res = await fetch(url, { method: "POST" });
+            const data = await res.json();
+
+            if (data.success) {
+              btn.innerText =
+                type === "lost" ? "Mark Recovered" : "Mark Returned";
+
+              card.classList.remove("resolved");
+              box.style.display = "none";
+
+              // 🔥 IMPORTANT: reload page
+              window.location.reload();
+            } else {
+              alert("Undo failed");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Server error during undo");
+          }
+
+          return;
+        }
+
+        // ======================
+        // 🟢 SHOW INPUT BOX
+        // ======================
+        box.style.display = "flex";
+      }
+
+      // ======================
+      // 💾 SAVE RECOVERY
+      // ======================
+      async function saveRecovery(saveBtn) {
+        const box = saveBtn.parentElement;
+        const input = box.querySelector("input");
+        const text = input.value.trim();
+
+        if (!text) {
+          alert("Please enter recovery details");
+          return;
+        }
+
+        const card = box.closest(".card");
+        const btn = card.querySelector(".status-btn");
+
+        const itemId = card.dataset.id;
+        const type = card.dataset.type;
+
+        const url =
+          type === "lost"
+            ? `/recover-lost/${itemId}`
+            : `/return-found/${itemId}`;
+
+        try {
+          const res = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: `note=${encodeURIComponent(text)}`,
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            card.classList.add("resolved");
+            btn.innerText = "Undo";
+            box.style.display = "none";
+            input.value = "";
+
+            // 🔥 FORCE FRESH DATA FROM DB
+          } else {
+            alert("Save failed");
+          }
+        } catch (err) {
+          console.error(err);
+          alert("Server error during save");
+        }
+      }
+      function toggleMenu() {
+        document.getElementById("menu").classList.toggle("show");
+      }
+    </script>
+  </body>
+</html>

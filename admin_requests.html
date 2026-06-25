@@ -1,0 +1,166 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin - User Requests</title>
+    <style>
+      body {
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+        margin: 0;
+        padding: 0;
+      }
+      .container {
+        max-width: 1000px;
+        margin: 50px auto;
+        padding: 0 20px;
+      }
+      h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #111827;
+      }
+      .card {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        border-radius: 12px;
+        padding: 15px 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+      .card img {
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+      .card-info {
+        flex: 1;
+        margin-left: 20px;
+      }
+      .card-info h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #111827;
+      }
+      .card-info p {
+        margin: 5px 0 0;
+        font-size: 14px;
+        color: #4b5563;
+      }
+      .actions a {
+        text-decoration: none;
+        padding: 8px 15px;
+        border-radius: 6px;
+        color: #fff;
+        margin-left: 5px;
+        font-size: 14px;
+        transition: 0.3s;
+      }
+      .approve {
+        background: #4f46e5;
+      }
+      .approve:hover {
+        background: #4338ca;
+      }
+      .reject {
+        background: #ef4444;
+      }
+      .reject:hover {
+        background: #b91c1c;
+      }
+      .flash {
+        text-align: center;
+        color: red;
+        margin-bottom: 10px;
+      }
+      .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+
+      .back-btn:hover {
+        background: #e5e7eb;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 20px;
+      }
+
+      .header h2 {
+        margin: 0;
+        font-size: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <button
+          class="back-btn"
+          onclick="window.location.href='{{ url_for('admin_dashboard') }}'"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M15 18L9 12L15 6"
+              stroke="#111"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <h2>Pending User Requests</h2>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash">
+        {% for category, message in messages %}
+        <div>{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %} {% if users %} {% for user in users %}
+      <div class="card">
+        <img
+          src="{{ url_for('static', filename='uploads/' + user.student_card) }}"
+          width="100"
+          style="cursor: pointer; border-radius: 6px"
+          onclick="openImage(this.src)"
+        />
+        <div class="card-info">
+          <h3>{{ user.name }}</h3>
+          <p>{{ user.email }}</p>
+          <p>Status: {{ user.status }}</p>
+        </div>
+        <div class="actions">
+          <a
+            href="{{ url_for('approve_user', user_id=user.id) }}"
+            class="approve"
+            >Approve</a
+          >
+          <a href="{{ url_for('reject_user', user_id=user.id) }}" class="reject"
+            >Reject</a
+          >
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <p style="text-align: center; color: #6b7280">No pending requests</p>
+      {% endif %}
+    </div>
+  </body>
+  <script>
+    function goBack() {
+      window.history.back();
+    }
+  </script>
+</html>

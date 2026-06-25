@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Poppins", sans-serif;
+        background: #f1f5f9;
+      }
+
+      /* HEADER */
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 22px 35px;
+        background: white;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .header-left h1 {
+        margin: 0;
+        font-size: 20px;
+        color: #0f172a;
+      }
+
+      .header-left p {
+        margin: 2px 0 0;
+        font-size: 12px;
+        color: #64748b;
+      }
+
+      .logout {
+        background: #ef4444;
+        color: white;
+        padding: 7px 14px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 13px;
+      }
+
+      /* CONTAINER */
+      .container {
+        padding: 30px;
+      }
+
+      /* GRID */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 22px;
+      }
+
+      /* LINK */
+      .card-link {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* CARD */
+      .card {
+        background: #ffffff;
+        padding: 22px;
+        border-radius: 16px;
+        transition: 0.3s;
+        position: relative;
+        border: 1px solid #e2e8f0;
+      }
+
+      /* HOVER */
+      .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+      }
+
+      /* TOP COLOR BAR (SUBTLE) */
+      .card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 4px;
+        width: 100%;
+        border-radius: 16px 16px 0 0;
+      }
+
+      /* DIFFERENT SOFT COLORS */
+      .users::before {
+        background: #3b82f6;
+      }
+      .lost::before {
+        background: #f59e0b;
+      }
+      .found::before {
+        background: #10b981;
+      }
+      .resolved::before {
+        background: #8b5cf6;
+      }
+      .pending::before {
+        background: #ef4444;
+      }
+      .messages::before {
+        background: #0ea5e9;
+      }
+      .today::before {
+        background: #42819e;
+      }
+      .today2::before {
+        background: #10b981;
+      }
+      .today3::before {
+        background: #8b5cf6;
+      }
+
+      /* TEXT */
+      .card h3 {
+        margin: 0;
+        font-size: 14px;
+        color: #64748b;
+      }
+
+      .card p {
+        font-size: 30px;
+        margin-top: 10px;
+        font-weight: 600;
+        color: #0f172a;
+      }
+
+      /* SMALL ICON (CLEAN) */
+      .icon {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        font-size: 18px;
+        opacity:;
+      }
+
+      /* FOOTER */
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #94a3b8;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="header-left">
+        <h1>WUS HELP DESK</h1>
+        <p>Lost & Found Admin Dashboard</p>
+      </div>
+      <a href="{{ url_for('admin_logout') }}" class="logout">Logout</a>
+    </div>
+
+    <div class="container">
+      <div class="stats">
+        <a href="{{ url_for('admin_users') }}" class="card-link">
+          <div class="card users">
+            <div class="icon">👤</div>
+            <h3>Total Users</h3>
+            <p>{{ total_users }}</p>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin_requests') }}" class="card-link">
+          <div class="card pending">
+            <div class="icon">⏳</div>
+            <h3>Pending Requests</h3>
+            <p>{{ pending_requests }}</p>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin_messages') }}" class="card-link">
+          <div class="card messages">
+            <div class="icon">💬</div>
+            <h3>Messages</h3>
+            <p>{{ total_messages }}</p>
+          </div>
+        </a>
+        <a href="{{ url_for('admin_today_lost') }}" class="card-link">
+          <div class="card today">
+            <div class="icon">📅</div>
+            <h3>Today Lost</h3>
+            <p>{{ today_lost }}</p>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin_today_found') }}" class="card-link">
+          <div class="card today2">
+            <div class="icon">📆</div>
+            <h3>Today Found</h3>
+            <p>{{ today_found }}</p>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin_today_resolved') }}" class="card-link">
+          <div class="card today3">
+            <div class="icon">🗓</div>
+            <h3>Today Resolved</h3>
+            <p>{{ today_resolved }}</p>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin_lost_items') }}" class="card-link">
+          <div class="card lost">
+            <div class="icon">📦</div>
+            <h3>Total Lost</h3>
+            <p>{{ total_lost }}</p>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin_found_items') }}" class="card-link">
+          <div class="card found">
+            <div class="icon">✅</div>
+            <h3>Total Found</h3>
+            <p>{{ total_found }}</p>
+          </div>
+        </a>
+
+        <a href="{{ url_for('admin_resolved') }}" class="card-link">
+          <div class="card resolved">
+            <div class="icon">✔️</div>
+            <h3>Total Resolved</h3>
+            <p>{{ total_resolved }}</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="footer">WUS Help Desk • Secure Admin System</div>
+    </div>
+  </body>
+</html>

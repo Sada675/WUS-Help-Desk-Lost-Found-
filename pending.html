@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Account Pending Approval</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", Arial, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #f1f5f9;
+        color: #222; /* 🔥 FIX */
+      }
+
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 16px;
+        text-align: center;
+        width: 90%;
+        max-width: 420px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      }
+
+      .icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+      }
+
+      h1 {
+        font-size: 26px;
+        margin-bottom: 10px;
+        color: #111;
+      }
+
+      p {
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #555; /* 🔥 FIX */
+      }
+
+      /* 🔄 LOADER FIX (dark visible) */
+      .loader {
+        width: 60px;
+        height: 60px;
+        border: 5px solid #e5e7eb;
+        border-top: 5px solid #4f46e5;
+        border-radius: 50%;
+        margin: 20px auto;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .status {
+        font-size: 13px;
+        background: #e5e7eb;
+        color: #111;
+        padding: 8px 12px;
+        border-radius: 20px;
+        display: inline-block;
+        margin-bottom: 20px;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 12px 20px;
+        background: #4f46e5;
+        color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: 0.3s;
+        margin: 5px;
+      }
+
+      .btn:hover {
+        background: #4338ca;
+      }
+
+      .small {
+        margin-top: 15px;
+        font-size: 12px;
+        color: #777; /* 🔥 FIX */
+      }
+
+      .approved {
+        background: #22c55e !important;
+        color: white !important;
+      }
+
+      .rejected {
+        background: #ef4444 !important;
+        color: white !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="icon">⏳</div>
+
+      <h1>Account Pending</h1>
+
+      <p>
+        Your account request has been submitted successfully.<br />
+        Admin will review your request.<br />
+        You will receive an email once approved or rejected.
+      </p>
+
+      <div class="loader"></div>
+
+      <div id="statusText" class="status">Checking status...</div>
+
+      <br />
+
+      <a href="/" class="btn">OK</a>
+
+      <div class="small">
+        Please wait while your account is being verified...
+      </div>
+    </div>
+
+    <script>
+      setInterval(checkStatus, 3000);
+
+      function checkStatus() {
+        fetch("/check-status")
+          .then((res) => res.json())
+          .then((data) => {
+            const statusEl = document.getElementById("statusText");
+
+            if (data.status === "approved") {
+              statusEl.innerText = "Approved! Redirecting...";
+              statusEl.className = "status approved";
+
+              setTimeout(() => {
+                window.location.href = "/";
+              }, 1500);
+            } else if (data.status === "rejected") {
+              statusEl.innerText = "Your request was rejected.";
+              statusEl.className = "status rejected";
+
+              setTimeout(() => {
+                window.location.href = "/login";
+              }, 2000);
+            } else {
+              statusEl.innerText = "Still pending approval...";
+              statusEl.className = "status";
+            }
+          });
+      }
+    </script>
+  </body>
+</html>

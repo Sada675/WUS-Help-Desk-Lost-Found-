@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Guidelines & Instructions</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/navbar.css') }}"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 150px auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        padding: 40px;
+      }
+
+      h1 {
+        text-align: center;
+        color: #1e293b;
+        margin-bottom: 25px;
+      }
+
+      h2 {
+        margin-top: 30px;
+        color: #2563eb;
+      }
+
+      p,
+      li {
+        color: #334155;
+        line-height: 1.7;
+        font-size: 15px;
+      }
+
+      ul,
+      ol {
+        padding-left: 20px;
+      }
+
+      .box {
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+      }
+
+      .warning {
+        background: #fee2e2;
+        border-left: 5px solid #dc2626;
+      }
+
+      .tips {
+        background: #dcfce7;
+        border-left: 5px solid #16a34a;
+      }
+
+      .user-guide {
+        background: #e0f2fe;
+        border-left: 5px solid #0284c7;
+      }
+
+      /* CONTACT ADMIN */
+      .contact-box {
+        margin-top: 40px;
+        padding: 25px;
+        background: #f8fafc;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .contact-box input,
+      .contact-box textarea {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      .contact-box button {
+        margin-top: 15px;
+        padding: 12px;
+        width: 100%;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .contact-box button:hover {
+        background: #1e40af;
+      }
+
+      /* FLASH */
+      .flash-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+      }
+
+      .flash {
+        background: #ef4444;
+        color: white;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+      }
+
+      .flash.success {
+        background: #22c55e;
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include "partials/navbar.html" %}
+
+    <div class="container">
+      <h1>📘 Guidelines & Instructions</h1>
+
+      <p>
+        Welcome to the <b>Lost & Found System</b>. Follow these guidelines for a
+        smooth and safe experience.
+      </p>
+
+      <!-- USER GUIDE -->
+      <div class="box user-guide">
+        <h2>📌 Instructions for You</h2>
+        <ul>
+          <li>Always use your real information while posting items.</li>
+          <li>Upload clear images of lost/found items.</li>
+          <li>Use chat or Gmail button only for genuine communication.</li>
+          <li>
+            Mark item as <b>Recovered/Returned</b> after successful claim.
+          </li>
+          <li>Do not spam or send unnecessary messages.</li>
+        </ul>
+      </div>
+
+      <!-- HOW TO USE -->
+      <h2>⚙️ How to Use</h2>
+      <ol>
+        <li>Register and verify using OTP.</li>
+        <li>Set your password.</li>
+        <li>Report lost or found items.</li>
+        <li>Search items using search bar.</li>
+        <li>Contact users via Chat or Gmail.</li>
+      </ol>
+
+      <!-- WARNINGS -->
+      <div class="box warning">
+        <h2>⚠️ Warnings</h2>
+        <ul>
+          <li>Never post fake or misleading information.</li>
+          <li>Avoid unsafe physical meetings.</li>
+          <li>Respect all users.</li>
+          <li>Admin can take action on misuse.</li>
+        </ul>
+      </div>
+
+      <!-- TIPS -->
+      <div class="box tips">
+        <h2>💡 Best Practices</h2>
+        <ul>
+          <li>Provide exact location details.</li>
+          <li>Keep your profile updated.</li>
+          <li>Respond quickly to messages.</li>
+        </ul>
+      </div>
+    </div>
+
+    <script>
+      setTimeout(() => {
+        const flash = document.querySelector(".flash-container");
+        if (flash) flash.style.display = "none";
+      }, 3000);
+      function toggleMenu() {
+        document.getElementById("menu").classList.toggle("show");
+      }
+    </script>
+  </body>
+</html>

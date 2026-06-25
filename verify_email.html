@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Email Verified</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <script src="{{ url_for('static', filename='js/main.js') }}" defer></script>
+  </head>
+  <body>
+    <div class="box">
+      <h2>Email Verified Successfully!</h2>
+      <div class="link">
+        <p><a href="{{ url_for('login') }}">Click here to login</a></p>
+      </div>
+    </div>
+  </body>
+</html>

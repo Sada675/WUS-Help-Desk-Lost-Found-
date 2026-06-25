@@ -1,0 +1,85 @@
+*{ box-sizing:border-box }
+
+body{
+  margin:0;
+  font-family: "Poppins", Arial, sans-serif;
+  background: #f1f5f9;
+  background-size:400% 400%;
+  animation:bgMotion 12s ease infinite;
+}
+
+@keyframes bgMotion{
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
+}
+
+/* NAVBAR */
+.navbar{
+  background:#26355d;
+  padding:15px 30px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.navbar a{
+  color:white;
+  text-decoration:none;
+  margin:0 12px;
+  font-weight:bold;
+}
+
+.logout{
+  background:#d32f2f;
+  padding:8px 18px;
+  border-radius:6px;
+}
+
+/* CONTAINER */
+.container{
+  max-width:900px;
+  margin:40px auto;
+  padding:20px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px;
+  border-radius:14px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.15);
+  margin-bottom:20px;
+}
+
+.card img{
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+button{
+  padding:10px 16px;
+  border:none;
+  border-radius:8px;
+  background:#6a5acd;
+  color:white;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#5848c2;
+}
+
+/* FORM */
+input,textarea,select{
+  width:100%;
+  padding:10px;
+  margin-bottom:12px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}

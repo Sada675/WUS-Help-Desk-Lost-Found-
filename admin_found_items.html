@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin – Found Items</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+      }
+
+      /* HEADER */
+      .header {
+        color: balck;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 15px;
+      }
+
+      .section-title {
+        margin: 30px 0 15px;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      /* SAME CARD STYLE (RESOLVED STYLE) */
+      .card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 15px;
+
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      }
+
+      .left {
+        flex: 1;
+      }
+
+      /* IMAGE RIGHT */
+      .item-img {
+        width: 160px;
+        height: 160px;
+        border-radius: 12px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      /* USER */
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .user img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #38bdf8;
+      }
+
+      .title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 5px 0;
+      }
+
+      .info {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.6;
+        word-break: break-word;
+      }
+
+      /* BADGE */
+      .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        margin-top: 8px;
+        color: white;
+      }
+
+      .blue {
+        background: #2563eb;
+      }
+
+      /* NOTE SAME LIKE RESOLVED */
+      .note {
+        margin-top: 8px;
+        padding: 8px;
+        background: #f8fafc;
+        border-left: 4px solid #94a3b8;
+        font-size: 13px;
+        word-break: break-word;
+      }
+
+      /* DELETE BUTTON SAME STYLE */
+      .btn-delete {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 6px 12px;
+        background: #dc2626;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 15px;
+        width: fit-content;
+      }
+
+      .btn-delete:hover {
+        background: #b91c1c;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 8px; /* 👈 yahi control karega spacing */
+        padding: 15px 20px;
+        margin-left: 120px;
+        margin-top: 50px;
+      }
+
+      .header h2 {
+        margin: 0;
+        font-size: 26px;
+      }
+
+      /* BACK BUTTON */
+      .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .back-btn:hover {
+        background: #e5e7eb;
+      }
+      /* SEARCH BAR (SAME AS LOST ITEMS) */
+      .search-bar {
+        width: 100%;
+        max-width: 1400px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: center;
+      }
+
+      .search-bar form {
+        width: 100%;
+        display: flex;
+        border: 1px solid #ccc;
+        border-radius: 25px;
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background: #fff;
+      }
+
+      .search-bar input[type="text"] {
+        flex: 1;
+        padding: 10px 20px;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        color: #333;
+      }
+
+      .search-bar input[type="text"]::placeholder {
+        color: #aaa;
+        font-style: italic;
+      }
+
+      .search-bar button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+        font-weight: bold;
+        transition: 0.3s;
+      }
+
+      .search-bar button:hover {
+        background-color: #45a049;
+      }
+      .flash-top {
+        position: fixed;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        text-align: center;
+      }
+
+      .flash-text {
+        font-size: 14px;
+        color: #111;
+        margin: 3px 0;
+        animation: fadeOut 3s forwards;
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <button
+        class="back-btn"
+        onclick="window.location.href='{{ url_for('admin_dashboard') }}'"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M15 18L9 12L15 6"
+            stroke="#111"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </button>
+
+      <h2>Total – Found Items</h2>
+    </div>
+    <!-- FLASH MESSAGE (TOP CENTER) -->
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-top">
+      {% for category, message in messages %}
+      <div class="flash-text">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="container">
+      <div class="search-bar">
+        <form>
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by item name, category, location..."
+            autocomplete="off"
+          />
+          <button type="button">Search</button>
+        </form>
+      </div>
+      {% for item in items %}
+      <div class="card">
+        <!-- LEFT -->
+        <div class="left">
+          <div class="user">
+            <img src="{{ item.profile_image_url }}" />
+            <strong>{{ item.user_name }}</strong>
+          </div>
+
+          <div class="title">{{ item.title }}</div>
+
+          <div class="info">
+            <p><b>Category:</b> {{ item.category }}</p>
+            <p><b>Location:</b> {{ item.location }}</p>
+            <p><b>Date:</b> {{ item.found_date }}</p>
+            <p>{{ item.description }}</p>
+          </div>
+
+          <!-- OPTIONAL RETURN NOTE -->
+          {% if item.return_note %}
+          <div class="note"><b>Return Note:</b> {{ item.return_note }}</div>
+          {% endif %}
+
+          <a href="/admin/delete-found-item/{{ item.id }}" class="btn-delete">
+            <i class="fa fa-trash"></i> Delete
+          </a>
+        </div>
+
+        <!-- RIGHT IMAGE -->
+        {% if item.image_url %}
+        <img class="item-img" src="{{ item.image_url }}" />
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <script>
+      const input = document.getElementById("searchInput");
+      const cards = document.querySelectorAll(".card");
+
+      const noMatch = document.createElement("div");
+      noMatch.innerText = "No match found";
+      noMatch.style.textAlign = "center";
+      noMatch.style.padding = "20px";
+      noMatch.style.color = "red";
+      noMatch.style.fontWeight = "bold";
+      noMatch.style.display = "none";
+
+      document.querySelector(".container").prepend(noMatch);
+
+      input.addEventListener("input", function () {
+        let q = this.value.toLowerCase().trim();
+        let found = 0;
+
+        cards.forEach((card) => {
+          let text = card.innerText.toLowerCase();
+
+          if (text.includes(q)) {
+            card.style.display = "flex";
+            found++;
+          } else {
+            card.style.display = "none";
+          }
+        });
+
+        if (found === 0) {
+          noMatch.style.display = "block";
+        } else {
+          noMatch.style.display = "none";
+        }
+      });
+    </script>
+  </body>
+</html>

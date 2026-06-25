@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Resend OTP</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+        background-size: 400% 400%;
+        animation: bgMotion 12s ease infinite;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      @keyframes bgMotion {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .container {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 12px;
+        width: 70%;
+        max-width: 400px;
+        text-align: center;
+      }
+
+      h2 {
+        color: #0f0f0f;
+        margin-bottom: 20px;
+      }
+
+      button {
+        width: 100%;
+        padding: 14px;
+        border: none;
+        border-radius: 8px;
+        background-color: #2e2d2d;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 16px;
+      }
+
+      button:hover {
+        background-color: #0c0c0c;
+      }
+
+      .links {
+        margin-top: 15px;
+        font-size: 14px;
+      }
+
+      .links a {
+        color: #0f0e0f;
+        text-decoration: none;
+      }
+
+      .links a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Resend OTP</h2>
+      <p>If you did not receive the OTP, you can resend it.</p>
+
+      <form action="/resend-otp" method="POST">
+        <button type="submit">Resend OTP</button>
+      </form>
+
+      <div class="links">
+        <a href="/verify-otp">Back to Verify OTP</a>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Found Items</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/navbar.css') }}"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background: #f1f5f9;
+        font-family: "Poppins", Arial, sans-serif;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 15px;
+      }
+
+      /* HEADER */
+      .header-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      .back-btn {
+        position: absolute;
+        left: 0;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 8px;
+        color: black;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+
+      .back-btn:hover {
+        background: #cbcdd1;
+      }
+
+      /* SEARCH BAR */
+      .search-bar {
+        margin-bottom: 20px;
+        margin-top: 65px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .search-bar input {
+        flex: 1;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
+
+      .search-bar button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      /* CARD */
+      .card {
+        background: #fff;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      }
+
+      .left {
+        flex: 1;
+      }
+
+      /* USER */
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        margin-bottom: 10px;
+      }
+
+      .user img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #38bdf8;
+      }
+
+      .user-name {
+        font-size: 18px;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      /* IMAGE */
+      .item-img {
+        width: 180px;
+        height: 180px;
+        border-radius: 12px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      /* ACTIONS */
+      .actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .chat {
+        background: #2563eb;
+      }
+
+      .gmail {
+        background: #d14836;
+      }
+
+      .gmail:hover {
+        background: #a73c2d;
+      }
+
+      /* BADGES */
+      .badge {
+        background: #ccc;
+        color: #333;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+
+      .badge.green {
+        background: #16a34a;
+        color: #fff;
+      }
+
+      .floating-icons {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      /* individual icons */
+      .floating-icons span {
+        position: absolute;
+        font-size: 28px;
+        opacity: 0.7;
+        animation: floatUp linear infinite;
+      }
+
+      /* animation */
+      @keyframes floatUp {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+        }
+        100% {
+          transform: translateY(-120vh) rotate(360deg);
+        }
+      }
+      .floating-icons {
+        z-index: 0; /* instead of -1 */
+      }
+      .container {
+        position: relative;
+        z-index: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include "partials/navbar.html" %}
+    <div class="floating-icons">
+      <span>📱</span>
+      <span>🎧</span>
+      <span>💻</span>
+      <span>📒</span>
+      <span>💰</span>
+      <span>⌚</span>
+      <span>☂️</span>
+      <!-- umbrella -->
+      <span>👜</span>
+      <!-- bag -->
+      <span>🕶️</span>
+      <!-- sunglasses -->
+      <span>📄</span>
+    </div>
+    <div class="container">
+      <!-- HEADER -->
+      <div class="header-wrapper">
+        <h2>Found Items</h2>
+      </div>
+
+      <!-- SEARCH -->
+      <form class="search-bar" id="searchForm">
+        <input type="text" name="q" placeholder="Search" />
+        <button type="submit">Search</button>
+      </form>
+
+      <!-- ITEMS -->
+      <div id="items-container">
+        {% include "partials/found_items_cards.html" %}
+      </div>
+    </div>
+
+    <script>
+      const searchForm = document.getElementById("searchForm");
+      const itemsContainer = document.getElementById("items-container");
+      const searchInput = searchForm.querySelector("input[name='q']");
+
+      // 🔹 manual search (button enter)
+      function refreshFound(query = "") {
+        fetch("/view-found-data?q=" + encodeURIComponent(query))
+          .then((res) => res.text())
+          .then((html) => {
+            itemsContainer.innerHTML = html;
+          });
+      }
+
+      // 🔹 ENTER / button search
+      searchForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+        refreshFound(searchInput.value);
+      });
+
+      // 🔹 LIVE SEARCH (typing)
+      let timeout = null;
+
+      searchInput.addEventListener("input", function () {
+        clearTimeout(timeout);
+
+        timeout = setTimeout(() => {
+          refreshFound(this.value);
+        }, 300);
+      });
+
+      // 🔹 chat
+      function openChat(ownerId) {
+        window.location.href = "/chat/" + ownerId;
+      }
+
+      // 🔹 status toggle
+      function toggleFoundStatus(itemId) {
+        fetch("/toggle-found-status/" + itemId, { method: "POST" }).then(
+          (res) => {
+            if (res.ok) {
+              refreshFound(searchInput.value);
+            } else {
+              alert("Failed to update status.");
+            }
+          },
+        );
+      }
+
+      // 🔹 floating icons
+      const icons = document.querySelectorAll(".floating-icons span");
+      const total = icons.length;
+
+      icons.forEach((icon, i) => {
+        let section = 100 / total;
+        let left = i * section + Math.random() * section;
+
+        icon.style.left = left + "%";
+        icon.style.animationDuration = 8 + Math.random() * 8 + "s";
+        icon.style.animationDelay = Math.random() * 5 + "s";
+        icon.style.fontSize = 20 + Math.random() * 20 + "px";
+      });
+
+      function toggleMenu() {
+        document.getElementById("menu").classList.toggle("show");
+      }
+    </script>
+  </body>
+</html>

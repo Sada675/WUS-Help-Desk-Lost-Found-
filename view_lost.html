@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Lost Items</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/navbar.css') }}"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+        font-family: Arial;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 15px;
+      }
+
+      h2 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+        text-align: center;
+      }
+
+      /* HEADER */
+      .header-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        margin-bottom: 20px;
+      }
+
+      .back-btn {
+        position: absolute;
+        left: 0;
+        padding: 6px 12px;
+        border-radius: 8px;
+        color: black;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      .back-btn:hover {
+        background: #cbcdd1;
+      }
+
+      /* SEARCH */
+      .search-bar {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 15px;
+        margin-top: 65px;
+      }
+
+      .search-bar input {
+        flex: 1;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+      }
+
+      .search-bar button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      /* LOADER */
+      #loader {
+        text-align: center;
+        margin: 10px 0;
+        display: none;
+      }
+
+      /* CARD */
+      .card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        transition: 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-3px);
+      }
+
+      .left {
+        flex: 1;
+      }
+
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+      }
+
+      .user img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .user-name {
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .item-img {
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 12px;
+      }
+
+      .actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 8px 14px;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+
+      .chat {
+        background: #2563eb;
+      }
+
+      .btn.gmail {
+        background: #d14836;
+      }
+
+      .btn.gmail:hover {
+        background: #a73c2d;
+      }
+
+      .badge {
+        background: #ccc;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+      }
+
+      .badge.green {
+        background: #16a34a;
+        color: white;
+      }
+
+      .floating-icons {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        overflow: hidden;
+        z-index: -1;
+      }
+
+      /* individual icons */
+      .floating-icons span {
+        position: absolute;
+        font-size: 28px;
+        opacity: 0.7;
+        animation: floatUp linear infinite;
+        animation-duration: 12s;
+      }
+
+      /* animation */
+      @keyframes floatUp {
+        0% {
+          transform: translateY(100vh) rotate(0deg);
+        }
+        100% {
+          transform: translateY(-120vh) rotate(360deg);
+        }
+      }
+      .floating-icons {
+        z-index: 0; /* instead of -1 */
+      }
+      .container {
+        position: relative;
+        z-index: 1;
+      }
+      .floating-icons span:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .floating-icons span:nth-child(2) {
+        animation-delay: 2s;
+      }
+      .floating-icons span:nth-child(3) {
+        animation-delay: 4s;
+      }
+      .floating-icons span:nth-child(4) {
+        animation-delay: 1s;
+      }
+      .floating-icons span:nth-child(5) {
+        animation-delay: 3s;
+      }
+      .floating-icons span:nth-child(6) {
+        animation-delay: 5s;
+      }
+      .floating-icons span:nth-child(7) {
+        animation-delay: 2.5s;
+      }
+      .floating-icons span:nth-child(8) {
+        animation-delay: 1.5s;
+      }
+      .floating-icons span:nth-child(9) {
+        animation-delay: 3.5s;
+      }
+      .floating-icons span:nth-child(10) {
+        animation-delay: 0.5s;
+      }
+      .floating-icons span:nth-child(11) {
+        animation-delay: 4.5s;
+      }
+      .dropdown {
+        display: none;
+      }
+      .dropdown.show {
+        display: block;
+      }
+    </style>
+  </head>
+
+  <body>
+    {% include "partials/navbar.html" %}
+    <div class="floating-icons">
+      <span>📱</span>
+      <span>🎧</span>
+      <span>💻</span>
+      <span>📒</span>
+      <span>💰</span>
+      <span>⌚</span>
+      <span>☂️</span>
+      <!-- umbrella -->
+      <span>👜</span>
+      <!-- bag -->
+      <span>🕶️</span>
+      <!-- sunglasses -->
+      <span>📄</span>
+    </div>
+    <div class="container">
+      <div class="header-wrapper">
+        <h2>Lost Items</h2>
+      </div>
+
+      <!-- SEARCH -->
+      <form class="search-bar" id="searchForm">
+        <input
+          type="text"
+          name="q"
+          placeholder="Search lost items..."
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
+
+      <!-- LOADER -->
+      <div id="loader"><i class="fa fa-spinner fa-spin"></i> Loading...</div>
+
+      <!-- ITEMS -->
+      <div id="items-container">
+        {% include "partials/lost_items_cards.html" %}
+      </div>
+    </div>
+
+    <script>
+      // ================= FLOATING ICONS ANIMATION =================
+      const icons = document.querySelectorAll(".floating-icons span");
+      const total = icons.length;
+
+      icons.forEach((icon, i) => {
+        let section = 100 / total;
+        let left = i * section + Math.random() * section;
+
+        icon.style.left = left + "%";
+        icon.style.animationDuration = 8 + Math.random() * 8 + "s";
+        icon.style.animationDelay = Math.random() * 5 + "s";
+        icon.style.fontSize = 20 + Math.random() * 20 + "px";
+      });
+
+      // ================= SEARCH FUNCTION =================
+      // ================= SEARCH FIX =================
+
+      // form ko reload hone se roko
+      document
+        .getElementById("searchForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+        });
+
+      const searchInput = document.querySelector("input[name='q']");
+      const container = document.getElementById("items-container");
+      const loader = document.getElementById("loader");
+
+      let timeout = null;
+
+      searchInput.addEventListener("input", function () {
+        clearTimeout(timeout);
+
+        let q = this.value;
+
+        timeout = setTimeout(() => {
+          loader.style.display = "block";
+
+          fetch("/view-lost-data?q=" + encodeURIComponent(q))
+            .then((res) => res.text())
+            .then((html) => {
+              container.innerHTML = html;
+              loader.style.display = "none";
+            })
+            .catch((err) => {
+              console.error("Search error:", err);
+              loader.style.display = "none";
+            });
+        }, 300);
+      });
+      // ================= CHAT =================
+      function openChat(ownerId) {
+        window.location.href = "/chat/" + ownerId;
+      }
+      function toggleMenu() {
+        document.getElementById("menu").classList.toggle("show");
+      }
+    </script>
+  </body>
+</html>

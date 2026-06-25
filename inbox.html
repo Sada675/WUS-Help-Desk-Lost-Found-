@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Inbox</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      body {
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f0f4f8;
+        padding: 20px;
+      }
+
+      #deleteBtn {
+        background:;
+        color:;
+        font-size: 25px;
+        margin-right: 30px;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: none;
+      }
+
+      .chat-list {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-user {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background: white;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: 0.2s;
+        position: relative;
+      }
+
+      .chat-user.selected {
+        background-color: #d1d5db !important; /* gray */
+      }
+
+      .chat-user img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 15px;
+        border: 2px solid #38bdf8;
+      }
+
+      .chat-user .name {
+        font-weight: bold;
+        font-size: 16px;
+      }
+
+      .chat-user .badge {
+        background: red;
+        color: white;
+        font-size: 12px;
+        padding: 3px 6px;
+        border-radius: 50%;
+        margin-left: auto;
+      }
+
+      .chat-checkbox {
+        transform: scale(1.2);
+        display: none;
+        margin-right: 10px;
+      }
+
+      /* Modal */
+      #confirmModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+
+      #confirmModal div {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        width: 300px;
+        text-align: center;
+      }
+
+      #confirmModal button {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+
+      #cancelBtn {
+        background: gray;
+        color: white;
+      }
+
+      #deleteConfirmBtn {
+        background: #ef4444;
+        color: white;
+        margin-right: 30px;
+      }
+
+      #confirmModal div div {
+        margin-top: 20px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+      .inbox-header {
+        position: relative;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+
+      .inbox-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      #backBtn {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 22px;
+        cursor: pointer;
+        color: #111;
+      }
+      #backBtn:hover {
+        background: #cbcdd1;
+      }
+
+      #deleteBtn {
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        font-size: 22px;
+        cursor: pointer;
+        display: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="inbox-header">
+      <button id="backBtn" onclick="handleBack()">
+        <i class="fa-solid fa-arrow-left"></i>
+      </button>
+
+      <h1>Your Chats</h1>
+
+      <button id="deleteBtn" onclick="deleteChats()">
+        <i class="fa-solid fa-trash"></i>
+      </button>
+    </div>
+
+    <div class="chat-list">
+      {% for user in chat_users %}
+      <div
+        class="chat-user"
+        id="chat-{{ user.id }}"
+        onclick="openChat({{ user.id }})"
+        onmousedown="startLongPress(event, {{ user.id }})"
+        onmouseup="cancelLongPress()"
+        onmouseleave="cancelLongPress()"
+      >
+        <input
+          type="checkbox"
+          class="chat-checkbox"
+          value="{{ user.id }}"
+          onclick="toggleSelect(event, {{ user.id }})"
+        />
+        <img
+          src="{{ url_for('static', filename='uploads/' + user.profile_image) if user.profile_image else 'https://cdn-icons-png.flaticon.com/512/847/847969.png' }}"
+          alt="Profile"
+        />
+        <span class="name">{{ user.name }}</span>
+        {% if user.unread_count > 0 %}
+        <span class="badge">{{ user.unread_count }}</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Modal -->
+    <div id="confirmModal">
+      <div>
+        <p id="confirmMessage">Delete this conversation?</p>
+        <div>
+          <button id="cancelBtn">Cancel</button>
+          <button id="deleteConfirmBtn">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let longPressTimer;
+      let deleteMode = false;
+      let inboxInterval = null;
+
+      /* =========================
+     AUTO REFRESH CONTROL
+  ========================== */
+      function startInboxAutoRefresh() {
+        if (!inboxInterval) {
+          inboxInterval = setInterval(fetchInbox, 5000);
+        }
+      }
+
+      function stopInboxAutoRefresh() {
+        if (inboxInterval) {
+          clearInterval(inboxInterval);
+          inboxInterval = null;
+        }
+      }
+
+      /* =========================
+     BACK BUTTON
+  ========================== */
+      function handleBack() {
+        if (deleteMode) {
+          exitDeleteMode();
+        } else {
+          window.history.back();
+        }
+      }
+
+      /* =========================
+     LONG PRESS
+  ========================== */
+      function startLongPress(event, id) {
+        longPressTimer = setTimeout(() => enterDeleteMode(id), 700);
+      }
+
+      function cancelLongPress() {
+        clearTimeout(longPressTimer);
+      }
+
+      /* =========================
+     DELETE MODE
+  ========================== */
+      function enterDeleteMode(id) {
+        deleteMode = true;
+        stopInboxAutoRefresh(); // 🔴 stop 5s refresh
+
+        document.querySelectorAll(".chat-checkbox").forEach((cb) => {
+          cb.style.display = "inline-block";
+        });
+
+        const chat = document.getElementById("chat-" + id);
+        chat.querySelector(".chat-checkbox").checked = true;
+        chat.classList.add("selected");
+
+        document.getElementById("deleteBtn").style.display = "inline-block";
+        document.getElementById("backBtn").style.display = "inline-block";
+      }
+
+      function exitDeleteMode() {
+        deleteMode = false;
+
+        document.querySelectorAll(".chat-checkbox").forEach((cb) => {
+          cb.style.display = "none";
+          cb.checked = false;
+        });
+
+        document.querySelectorAll(".chat-user").forEach((chat) => {
+          chat.classList.remove("selected");
+        });
+
+        document.getElementById("deleteBtn").style.display = "none";
+        document.getElementById("backBtn").style.display = "none";
+
+        startInboxAutoRefresh(); // ✅ resume refresh
+      }
+
+      /* =========================
+     CHAT OPEN
+  ========================== */
+      function openChat(id) {
+        if (!deleteMode) {
+          window.location.href = "/chat/" + id;
+        }
+      }
+
+      /* =========================
+     SELECT CHAT
+  ========================== */
+      function toggleSelect(event, id) {
+        event.stopPropagation();
+
+        const row = document.getElementById("chat-" + id);
+        const checkbox = row.querySelector(".chat-checkbox");
+
+        // ❌ checkbox.checked = !checkbox.checked;  <-- REMOVE THIS
+
+        if (checkbox.checked) {
+          row.classList.add("selected");
+        } else {
+          row.classList.remove("selected");
+        }
+
+        updateDeleteButton();
+      }
+
+      function updateDeleteButton() {
+        const selectedCount = document.querySelectorAll(
+          ".chat-checkbox:checked",
+        ).length;
+
+        document.getElementById("deleteBtn").style.display =
+          selectedCount > 0 ? "inline-block" : "none";
+      }
+
+      /* =========================
+     DELETE CHATS
+  ========================== */
+      function deleteChats() {
+        const selected = Array.from(
+          document.querySelectorAll(".chat-checkbox:checked"),
+        ).map((cb) => cb.value);
+
+        if (selected.length === 0) return;
+
+        stopInboxAutoRefresh(); // 🔴 modal open
+
+        const modal = document.getElementById("confirmModal");
+        document.getElementById("confirmMessage").innerText =
+          selected.length === 1
+            ? "Delete this conversation?"
+            : `Delete ${selected.length} conversations?`;
+
+        modal.style.display = "flex";
+
+        document.getElementById("cancelBtn").onclick = () => {
+          modal.style.display = "none";
+          startInboxAutoRefresh();
+        };
+
+        document.getElementById("deleteConfirmBtn").onclick = async () => {
+          const res = await fetch("/delete-chats", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ chat_ids: selected }),
+          });
+
+          const data = await res.json();
+
+          if (data.success) {
+            fetchInbox();
+          } else {
+            alert("Delete failed");
+          }
+
+          modal.style.display = "none";
+          exitDeleteMode();
+        };
+      }
+
+      /* =========================
+     FETCH INBOX
+  ========================== */
+      async function fetchInbox() {
+        if (deleteMode) return; // 🔐 safety guard
+
+        const res = await fetch("/fetch-inbox");
+        if (!res.ok) return;
+
+        const data = await res.json();
+        const chatList = document.querySelector(".chat-list");
+        chatList.innerHTML = "";
+
+        data.chat_users.forEach((user) => {
+          const div = document.createElement("div");
+          div.className = "chat-user";
+          div.id = "chat-" + user.id;
+
+          div.innerHTML = `
+        <input type="checkbox" class="chat-checkbox" value="${user.id}" style="display:none"
+          onclick="toggleSelect(event, ${user.id})">
+
+        <img src="${
+          user.profile_image ||
+          "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+        }">
+
+        <span class="name">${user.name}</span>
+
+        ${
+          user.unread_count > 0
+            ? `<span class="badge">${user.unread_count}</span>`
+            : ""
+        }
+      `;
+
+          div.onclick = () => openChat(user.id);
+          div.onmousedown = (e) => startLongPress(e, user.id);
+          div.onmouseup = cancelLongPress;
+          div.onmouseleave = cancelLongPress;
+
+          chatList.appendChild(div);
+        });
+      }
+
+      /* =========================
+     INIT
+  ========================== */
+      fetchInbox();
+      startInboxAutoRefresh();
+    </script>
+  </body>
+</html>

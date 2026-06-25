@@ -1,0 +1,279 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Admin Messages</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+        color: #0f172a;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .card {
+        background: #fff;
+        padding: 18px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        transition: 0.2s;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+      }
+
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .user img {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #e2e8f0;
+      }
+
+      .name {
+        font-weight: 700;
+        font-size: 15px;
+      }
+
+      .email {
+        font-size: 13px;
+        color: #64748b;
+      }
+
+      .time {
+        font-size: 12px;
+        color: #94a3b8;
+      }
+
+      .subject {
+        margin-top: 12px;
+        font-weight: 600;
+        color: #2563eb;
+      }
+
+      .message {
+        margin-top: 8px;
+        color: #475569;
+        line-height: 1.6;
+      }
+
+      .actions {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 8px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 13px;
+        border: none;
+        cursor: pointer;
+      }
+
+      .reply {
+        background: #16a34a;
+        color: white;
+      }
+
+      .delete {
+        background: #ef4444;
+        color: white;
+      }
+
+      .empty {
+        text-align: center;
+        margin-top: 60px;
+        color: #64748b;
+      }
+      .header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 15px 20px;
+      }
+
+      .header h2 {
+        margin: 0;
+        font-size: 30px;
+      }
+
+      .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+
+      .back-btn:hover {
+        background: #e5e7eb;
+      }
+      .flash-container {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 9999;
+        width: auto;
+      }
+
+      .flash {
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+        min-width: 250px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .flash.success {
+        background: green;
+        color: white;
+      }
+
+      .flash.error {
+        background: green;
+        color: white;
+      }
+
+      .flash.warning {
+        background: green;
+        color: white;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      {% with flashes = get_flashed_messages(with_categories=true) %} {% if
+      flashes %}
+      <div class="flash-container">
+        {% for category, message in flashes %}
+        <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+      <div class="header">
+        <button
+          class="back-btn"
+          onclick="window.location.href='{{ url_for('admin_dashboard') }}'"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M15 18L9 12L15 6"
+              stroke="#111"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+        <h2>User Messages</h2>
+      </div>
+
+      {% if messages %} {% for msg in messages %}
+      <div class="card">
+        <!-- TOP -->
+        <div class="top">
+          <div class="user">
+            <img
+              src="{% if msg.profile_image %}/static/uploads/{{ msg.profile_image }}{% else %}https://i.ibb.co/2kR1b8Q/user.png{% endif %}"
+            />
+
+            <div>
+              <div class="name">{{ msg.name }}</div>
+              <div class="email">{{ msg.email }}</div>
+            </div>
+          </div>
+
+          <div class="time">⏰ {{ msg.created_at }}</div>
+        </div>
+
+        <!-- SUBJECT -->
+        <div class="subject">Subject: {{ msg.subject }}</div>
+
+        <!-- MESSAGE -->
+        <div class="message">Message: {{ msg.message }}</div>
+
+        <!-- ACTIONS -->
+        <div class="actions">
+          <a
+            href="mailto:{{ msg.email }}?subject=Reply: {{ msg.subject }}"
+            class="btn reply"
+          >
+            Reply
+          </a>
+
+          <form
+            action="/admin/delete-message/{{ msg.id }}"
+            method="POST"
+            style="display: inline"
+          >
+            <button
+              class="btn delete"
+              onclick="return confirm('Delete this message?');"
+            >
+              Delete
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <div class="empty">No messages found 😴</div>
+      {% endif %}
+    </div>
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+
+      setTimeout(() => {
+        const flashes = document.querySelectorAll(".flash");
+
+        flashes.forEach((flash) => {
+          flash.style.transition = "opacity 0.5s ease";
+          flash.style.opacity = "0";
+
+          setTimeout(() => {
+            flash.remove();
+          }, 500); // fade-out ke baad remove
+        });
+      }, 3000); // 3 seconds
+    </script>
+  </body>
+</html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html>
+  <head>
+    <title>User Profile</title>
+    <style>
+      body {
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+      }
+      .box {
+        max-width: 600px;
+        margin: 50px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+      img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #4f46e5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box">
+      <img
+        src="{{ url_for('static', filename='uploads/' + user.profile_image) }}"
+      />
+      <form
+        action="/chat/block/{{ user.id }}"
+        method="POST"
+        style="margin-top: 15px"
+      >
+        {% if blocked_by_me %}
+        <button
+          type="submit"
+          style="
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+          "
+        >
+          Unblock User
+        </button>
+        {% else %}
+        <button
+          type="submit"
+          style="
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+          "
+        >
+          Block User
+        </button>
+        {% endif %}
+      </form>
+      <h2>{{ user.name }}</h2>
+      <p>{{ user.email }}</p>
+      <p>{{ user.phone }}</p>
+      <p>{{ user.department }}</p>
+      <p>{{ user.address }}</p>
+      <p>{{ user.bio }}</p>
+    </div>
+  </body>
+</html>

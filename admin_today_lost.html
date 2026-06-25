@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin – Today Lost Items</title>
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        font-family: "Poppins", Arial, sans-serif;
+        background: #f1f5f9;
+      }
+
+      /* HEADER */
+      .header {
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 30px auto;
+        padding: 0 15px;
+      }
+
+      .section-title {
+        margin: 30px 0 15px;
+        font-size: 20px;
+        font-weight: bold;
+      }
+
+      /* CARD (SAME AS OTHER PAGES) */
+      .card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 15px;
+
+        display: flex;
+        align-items: flex-start;
+        gap: 15px;
+
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      }
+
+      .left {
+        flex: 1;
+        min-width: 0;
+      }
+
+      /* USER */
+      .user {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+
+      .user img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #38bdf8;
+      }
+
+      /* TEXT */
+      .title {
+        font-size: 18px;
+        font-weight: bold;
+        margin: 5px 0;
+      }
+
+      .info {
+        font-size: 14px;
+        color: #555;
+        line-height: 1.6;
+        word-break: break-word;
+        overflow-wrap: break-word;
+      }
+
+      /* IMAGE */
+      .item-img {
+        width: 160px;
+        height: 160px;
+        border-radius: 12px;
+        object-fit: cover;
+        flex-shrink: 0;
+      }
+
+      /* DELETE BUTTON */
+      .btn-delete {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 5px 10px;
+        background: #dc2626;
+        color: white;
+        border-radius: 6px;
+        font-size: 15px;
+        text-decoration: none;
+        width: fit-content;
+      }
+
+      .btn-delete:hover {
+        background: #b91c1c;
+      }
+      .header {
+        padding: 15px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-left: 40px;
+        margin-bottom: -20px;
+      }
+
+      .header h2 {
+        margin: 20px;
+        font-size: 30px;
+      }
+
+      .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .back-btn:hover {
+        background: #e5e7eb;
+      }
+      .flash-top {
+        position: fixed;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 99999;
+        text-align: center;
+      }
+
+      .flash-text {
+        padding: 10px 20px;
+        margin: 5px 0;
+        border-radius: 8px;
+        font-size: 14px;
+        color: white;
+        animation: fadeOut 3s forwards;
+      }
+
+      /* categories */
+      .success {
+        background: #16a34a;
+      }
+
+      .error {
+        background: #dc2626;
+      }
+
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+        }
+        70% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      <div class="header">
+        <button
+          class="back-btn"
+          onclick="window.location.href='{{ url_for('admin_dashboard') }}'"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path
+              d="M15 18L9 12L15 6"
+              stroke="#111"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+
+        <h2>Today Lost Items</h2>
+      </div>
+    </div>
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %}
+    <div class="flash-top">
+      {% for category, message in messages %}
+      <div class="flash-text {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="container">
+      {% for item in today_lost_items %}
+      <div class="card">
+        <!-- LEFT -->
+        <div class="left">
+          <!-- USER -->
+          <div class="user">
+            <img
+              src="{{ url_for('static', filename='uploads/' ~ item.profile_image) 
+  if item.profile_image else url_for('static', filename='images/default_user.png') }}"
+            />
+            <strong>{{ item.user_name }}</strong>
+          </div>
+
+          <!-- TITLE -->
+          <div class="title">{{ item.title }}</div>
+
+          <!-- INFO -->
+          <div class="info">
+            <p><b>Category:</b> {{ item.category }}</p>
+            <p><b>Location:</b> {{ item.location }}</p>
+            <p><b>Lost Date:</b> {{ item.lost_date }}</p>
+            <p>{{ item.description }}</p>
+          </div>
+
+          <!-- DELETE -->
+          <a
+            href="/admin/today-delete-lost-item/{{ item.id }}"
+            class="btn-delete"
+          >
+            <i class="fa fa-trash"></i> Delete
+          </a>
+        </div>
+
+        <!-- IMAGE RIGHT -->
+        {% if item.image %}
+        <img
+          class="item-img"
+          src="{{ url_for('static', filename='uploads/' ~ item.image) }}"
+        />
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <script>
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+  </body>
+</html>
